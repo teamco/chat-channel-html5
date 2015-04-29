@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>* {
+        font-size: 12px;
+        height: 100%;
+        padding: 0;
+        margin: 0;
+        overflow: hidden;
+        outline: none
+    }
+
+    article {
+        background-color: #fff;
+        height: auto;
+        min-height: 100%;
+        position: relative;
+        margin-bottom: -3em;
+        overflow-y: auto
+    }
+
+    article > div {
+        height: 2em
+    }
+
+    input {
+        margin-top: 0.3em;
+        width: 90%;
+        height: 2em;
+        border-radius: 3px;
+        border: 1px solid #333;
+        padding: 0 3px;
+    }
+
+    p {
+        padding: 2px
+    }
+
+    footer {
+        text-align: left;
+        padding: 0 0.5em;
+        height: 3em;
+        position: relative;
+        border-top: 1px solid #999;
+        background: linear-gradient(to bottom, #eeeeee 0%, #cccccc 100%);
+    }</style>
+</head>
+<body>
+<article>
+    <div></div>
+</article>
+<footer><input placeholder="Enter something" type="text"/></footer>
+<script>
+    (function () {
+        var port;
+        window.private_name = '';
+        function addRow(txt) {
+            var a = document.querySelector("article");
+            var p = document.createElement("p");
+            p.appendChild(document.createTextNode(txt.replace(/^msg,/, "")));
+            a.insertBefore(p, document.querySelector("article>div"));
+            if (window.private_name.length === 0) {
+                window.private_name = txt.match(/msg,Hello (\w+):/)[1];
+            }
+        }
+
+        window.addEventListener("message", function (event) {
+            var txt = typeof(event.data) === 'string' ? event.data : event.data[0];
+            port = event.ports[0];
+            if (txt.match(/^script,/)) {
+                eval(txt.replace(/^script,/, ""));
+            } else {
+                addRow(txt);
+            }
+            if (port) port.postMessage('Joined');
+        }, false);
+        document.querySelector('input').addEventListener('keydown',
+                function (e) {
+                    if (e.which === 13) {
+                        var txt = e.target.value;
+                        port ? port.postMessage(txt) : window.parent.postMessage(window.private_name + ': ' + txt, '*');
+                        //addRow(window.private_name + ': ' + txt);
+                        e.target.value = '';
+                    }
+                }
+        );
+    })();
+</script>
+</body>
+</html>
