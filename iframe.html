@@ -12,7 +12,7 @@
 
     article {
         background-color: #fff;
-        height: auto;
+        height: 100%;
         min-height: 100%;
         position: relative;
         margin-bottom: -3em;
@@ -20,7 +20,7 @@
     }
 
     article > div {
-        height: 2em
+        height: 3em
     }
 
     input {
@@ -33,7 +33,8 @@
     }
 
     p {
-        padding: 2px
+        padding: 2px;
+        height: auto;
     }
 
     footer {
@@ -78,7 +79,8 @@
                 function (e) {
                     if (e.which === 13) {
                         var txt = e.target.value;
-                        port ? port.postMessage(txt) : window.parent.postMessage(window.private_name + ': ' + txt, '*');
+                        if (txt.length > 0)
+                        	port ? port.postMessage(txt) : window.parent.postMessage(window.private_name + ': ' + txt, '*');
                         //addRow(window.private_name + ': ' + txt);
                         e.target.value = '';
                     }
